@@ -1,6 +1,8 @@
 # RightHand - Voice Controlled Assistant for Mac
 
-RightHand is a voice controlled assistant for macOS, built using Go. It makes use of several powerful libraries such as `robotgo` for simulating keyboard input, `whisper` for voice recognition, `macdriver` for creating macOS applications using Go, and `langchaingo` for Language Learning Model interpretation. This software uses OpenAI's GPT-4 model to interpret transcriptions and generate corresponding commands.
+RightHand is a voice controlled assistant for macOS, built using Go. With the power of RightHand, you can control your apps with voice commands, making your workflow smoother and more efficient. Whether it's opening a file, navigating through your apps, or even controlling your music player, everything can be done by your voice.
+
+RightHand leverages several powerful libraries such as `robotgo` for simulating keyboard input, `whisper` for voice recognition, `macdriver` for creating macOS applications using Go, and `langchaingo` for Language Learning Model interpretation. This software uses OpenAI's GPT-4 model to interpret transcriptions and generate corresponding commands.
 
 Righthand uses the lovely [macdriver](https://github.com/progrium/macdriver) project to enable MacOS api interactions.
 
@@ -13,12 +15,13 @@ Two weeks before initially publishing this I got into a pretty bad mountain biki
 ## Features
 
 1. **Voice Recognition**: Leveraging the `whisper` model, RightHand can accurately transcribe spoken words into text.
-2. **Language Learning Model**: RightHand uses `langchaingo`, with OpenAI's GPT-4 model to interpret the transcribed text and generate commands.
-3. **Active App Context**: RightHand considers the context of the currently active application to interpret and execute commands appropriately.
+2. **Natural Language Understanding**: RightHand uses `langchaingo` with OpenAI's GPT-4 model to understand the context of your speech and execute relevant actions.
+3. **Contextual Awareness**: RightHand adapts its responses based on the currently active application, providing a tailored user experience.
+4. **Hands-Free Control**: Perform actions such as opening files, navigating through apps, controlling media playback, and more using just your voice.
 
 ## Installation
 
-Ensure that Go is installed on your machine. To install RightHand, clone the repository and run:
+Ensure that Go is installed on your machine. Other dependencies include `robotgo`, `whisper`, `macdriver`, and `langchaingo`. To install RightHand, clone the repository and run:
 
 ```shell
 $ go install github.com/tmc/righthand@main

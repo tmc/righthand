@@ -4,7 +4,7 @@ RightHand is a voice controlled assistant for macOS, built using Go. It makes us
 
 ## Motivation
 
-<img width="456" alt="cyborg" src="https://github.com/tmc/righthand/assets/3977/be5d0ce4-9384-48e0-8ff4-2a5563234ca4">
+<img width="218" alt="cyborg-tmc" src="https://github.com/tmc/righthand/assets/3977/5ac06331-48fc-4f53-8f0c-e1bfef000af8">
 
 Two weeks before initially publishing this I got into a pretty bad mountain biking accident. I built this for myself to better use my computer with a mix of one-handed typing and voice control.
 

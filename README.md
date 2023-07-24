@@ -2,6 +2,8 @@
 
 RightHand is a voice controlled assistant for macOS, built using Go. It makes use of several powerful libraries such as `robotgo` for simulating keyboard input, `whisper` for voice recognition, `macdriver` for creating macOS applications using Go, and `langchaingo` for Language Learning Model interpretation. This software uses OpenAI's GPT-4 model to interpret transcriptions and generate corresponding commands.
 
+Righthand uses the lovely [macdriver](https://github.com/progrium/macdriver) project to enable MacOS api interactions.
+
 ## Motivation
 
 <img width="218" alt="cyborg-tmc" src="https://github.com/tmc/righthand/assets/3977/5ac06331-48fc-4f53-8f0c-e1bfef000af8">

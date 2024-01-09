@@ -184,6 +184,8 @@ github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZN
 github.com/posener/complete v1.1.1/go.mod h1:em0nMJCgc9GFtwrmVmEMR/ZL6WyhyjMBndrE9hABlRI=
 github.com/progrium/macdriver v0.4.1-0.20230706190053-7e5bd0a70b46 h1:7GE4lXWFOaFENnw+el3RDcdsrAns8O1YCn7YNnBanu4=
 github.com/progrium/macdriver v0.4.1-0.20230706190053-7e5bd0a70b46/go.mod h1:eOkZeUZKoYeBp7kXdZXTPqtn+c67fVxBYO6NyHIoDac=
+github.com/progrium/macdriver v0.4.1-0.20230707194159-de4890829065 h1:qngq0/ErnRI8OctkoB+/amnHsUidY3VEW5mHpBhO1iY=
+github.com/progrium/macdriver v0.4.1-0.20230707194159-de4890829065/go.mod h1:eOkZeUZKoYeBp7kXdZXTPqtn+c67fVxBYO6NyHIoDac=
 github.com/progrium/macschema v0.1.1-0.20230703163849-29f3d05de640/go.mod h1:4Xfn2JjWUS9ZFQwyRsrU8hbOHVAuvDj+7PX29p1uhts=
 github.com/prometheus/client_golang v0.9.1/go.mod h1:7SWBe2y4D6OKWSNQJUaRYU/AaXPKyh/dDVn+NZz0KFw=
 github.com/prometheus/client_golang v0.9.3/go.mod h1:/TN21ttK/J9q6uSwhBd54HahCDft0ttaMvbicHlPoso=

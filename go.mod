@@ -5,7 +5,7 @@ go 1.20
 require (
 	github.com/go-vgo/robotgo v0.100.10
 	github.com/goccy/go-yaml v1.11.0
-	github.com/progrium/macdriver v0.4.1-0.20230706190053-7e5bd0a70b46
+	github.com/progrium/macdriver v0.4.1-0.20230707194159-de4890829065
 	github.com/tmc/audioutil v0.0.0-20230707005244-54efdb41c235
 	github.com/tmc/langchaingo v0.0.0-20230701162323-81dcfa6b690d
 	github.com/tmc/whisper.cpp/bindings/go v0.0.0-20230705062322-9af4a3211895

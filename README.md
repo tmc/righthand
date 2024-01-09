@@ -21,7 +21,7 @@ Two weeks before initially publishing this I got into a pretty bad mountain biki
 
 ## Installation
 
-Ensure that Go is installed on your machine. Other dependencies include `robotgo`, `whisper`, `macdriver`, and `langchaingo`. To install RightHand, clone the repository and run:
+Ensure that Go is installed on your machine. To install RightHand, run:
 
 ```shell
 $ go install github.com/tmc/righthand@main

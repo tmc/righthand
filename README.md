@@ -21,6 +21,11 @@ Two weeks before initially publishing this I got into a pretty bad mountain biki
 
 ## Installation
 
+### Dependencies:
+
+* Go
+* portaudio
+
 Ensure that Go is installed on your machine. To install RightHand, run:
 
 ```shell

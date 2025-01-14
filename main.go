@@ -13,8 +13,8 @@ var (
 	// flagDumpWAVFile is a flag to dump the audio to a WAV file.
 	flagDumpWAVFile = flag.Bool("dump-wav", false, "dump the audio to a WAV file")
 
-	// defaultTimeout is the default timeout for listening.
-	defaultTimeout = 30 * time.Second
+	// DefaultTimeout is the default timeout for listening.
+	DefaultTimeout = 30 * time.Second
 )
 
 // main is the entrypoint.

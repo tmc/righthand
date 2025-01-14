@@ -42,19 +42,59 @@ type App struct {
 
 // newApp creates a new app.
 func newApp(cfg RightHandConfig) (*App, error) {
-	fmt.Fprintln(os.Stderr, "righthand: initializing...")
-	fmt.Fprintln(os.Stderr, "righthand: using whisper model:", cfg.WhisperModel)
+	fmt.Println("\nRightHand - Voice Control Assistant")
+	fmt.Println("===================================")
+
+	// Create a log file
+	logFile, err := os.OpenFile("righthand.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
+	if err != nil {
+		return nil, fmt.Errorf("could not create log file: %w", err)
+	}
+
+	// Create a custom writer that filters out whisper messages
+	filterWriter := &filterWriter{
+		out: logFile,
+		filter: func(p []byte) bool {
+			s := string(p)
+			return strings.Contains(s, "whisper") ||
+				strings.Contains(s, "warning:") ||
+				strings.Contains(s, "note:") ||
+				strings.Contains(s, "error:") ||
+				strings.Contains(s, "ld:")
+		},
+	}
+
+	// Set up logging to filter messages but keep stderr as is
+	log.SetOutput(filterWriter)
+
+	// Temporarily disable stderr during initialization
+	oldStderr := os.Stderr
+	devNull, _ := os.OpenFile(os.DevNull, os.O_WRONLY, 0)
+	os.Stderr = devNull
+
+	fmt.Println("Initializing voice recognition...")
+
+	// Initialize whisper
 	wa, err := whisperaudio.New(
 		whisperutil.WithAutoFetch(),
 		whisperutil.WithModelName(cfg.WhisperModel),
 	)
+
+	// Restore stderr
+	os.Stderr = oldStderr
+
 	if err != nil {
-		return nil, fmt.Errorf("could not create whisperaudio: %w", err)
+		return nil, fmt.Errorf("could not initialize voice recognition: %w", err)
 	}
+
+	fmt.Println("Initializing language model...")
 	cllm, err := openai.NewChat(openai.WithModel(cfg.LLMModel))
 	if err != nil {
-		return nil, fmt.Errorf("could not create chat LLM: %w", err)
+		return nil, fmt.Errorf("could not initialize language model: %w", err)
 	}
+
+	fmt.Println("Initialization complete!\n")
+
 	return &App{
 		listeningToggle: make(chan struct{}, 1),
 		wa:              wa,
@@ -63,11 +103,36 @@ func newApp(cfg RightHandConfig) (*App, error) {
 	}, nil
 }
 
+// filterWriter is a custom writer that can filter out unwanted log messages
+type filterWriter struct {
+	out    *os.File
+	filter func([]byte) bool
+}
+
+// Write implements io.Writer
+func (w *filterWriter) Write(p []byte) (n int, err error) {
+	if w.filter(p) {
+		return len(p), nil // pretend we wrote it
+	}
+	return w.out.Write(p)
+}
+
 // run runs the app.
 func (app *App) run(ctx context.Context) error {
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 	go app.runMainLoop(ctx)
+
+	fmt.Println("\nInstructions:")
+	fmt.Println("1. Press Command + Control to start listening")
+	fmt.Println("2. Speak your command")
+	fmt.Println("3. Release the keys to execute")
+	fmt.Println("\nExample commands:")
+	fmt.Println("- \"open a new tab\"")
+	fmt.Println("- \"go to my home directory\"")
+	fmt.Println("- \"scroll down\"")
+	fmt.Println("\nReady for commands! Press Command + Control to begin...\n")
+
 	app.runNSApp(ctx)
 	return nil
 }
@@ -79,35 +144,34 @@ func (app *App) runMainLoop(ctx context.Context) {
 		listeningTimeout <-chan time.Time
 		audioBuffer      []float32
 	)
-	fmt.Println("righthand: ready")
+
 	for {
 		select {
 		case <-app.listeningToggle:
 			listening = !listening
 			if listening {
-				listeningTimeout = time.After(defaultTimeout)
-				fmt.Println("listening...")
+				listeningTimeout = time.After(DefaultTimeout)
+				fmt.Println("🎤 Listening...")
 				audioBuffer = nil
 				err := app.wa.Start()
 				if err != nil {
-					log.Printf("error starting whisperaudio: %v", err)
+					log.Printf("Error starting audio: %v", err)
 				}
 			} else {
-				fmt.Println("transcribing...")
+				fmt.Println("Processing...")
 				if err := app.wa.Stop(); err != nil {
-					log.Printf("error stopping whisperaudio: %v", err)
+					log.Printf("Error stopping audio: %v", err)
 				}
 				if app.cfg.DumpWAVFile {
 					go wavutil.SaveWAV("output.wav", audioBuffer[:], whisper.SampleRate)
 				}
-				t1 := time.Now()
 				text, err := app.wa.Transcribe(audioBuffer)
 				if err != nil {
-					log.Printf("error transcribing: %v", err)
+					log.Printf("Error transcribing: %v", err)
 					continue
 				}
-				fmt.Printf("transcribed: %q in %v\n", text, time.Since(t1))
 				if text != "" {
+					fmt.Printf("💬 You said: %q\n", text)
 					go app.handleText(ctx, text)
 				}
 			}
@@ -183,7 +247,7 @@ Return the input exactly as provided if you aren't confident in your answer.`
 // handleText handles text.
 func (app *App) handleText(ctx context.Context, text string) {
 	activeApp := fmt.Sprint(cocoa.NSWorkspace_SharedWorkspace().FrontmostApplication().LocalizedName())
-	fmt.Println("active app:", activeApp)
+	fmt.Printf("📱 Active app: %s\n", activeApp)
 
 	messages := []schema.ChatMessage{
 		schema.SystemChatMessage{
@@ -205,17 +269,19 @@ func (app *App) handleText(ctx context.Context, text string) {
 		nExamples = len(prog.Examples)
 	}
 
-	fmt.Fprintf(os.Stderr, "righthand: using %v few-shot examples for %v\n", nExamples, activeApp)
+	if nExamples > 0 {
+		fmt.Printf("ℹ️  Using %d custom commands for %s\n", nExamples, activeApp)
+	}
 
 	// append the human message:
 	messages = append(messages, schema.HumanChatMessage{Text: text})
 
 	llmText, err := app.llm.Call(ctx, messages)
 	if err != nil {
-		log.Printf("error calling LLM: %v", err)
+		log.Printf("❌ Error processing command: %v", err)
 		return
 	}
-	fmt.Println("response:", llmText)
+	fmt.Printf("🤖 Executing: %s\n", llmText)
 	simulateTyping(llmText)
 }
 
